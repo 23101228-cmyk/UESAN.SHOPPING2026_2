@@ -10,16 +10,18 @@ namespace UESAN.SHOPPING.CORE.Core.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IJWTService _jwtService;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IJWTService jwtService)
         {
             _userRepository = userRepository;
+            _jwtService = jwtService;
         }
 
         public async Task<UserDTO> SignIn(string email, string password)
         {
             var user = await _userRepository.SignIn(email, password);
-            var token = ""; // Aquí deberías generar un token JWT o similar para autenticación
+            var token = _jwtService.GenerateJWToken(user); // Aquí deberías generar un token JWT o similar para autenticación
 
             if (user == null) return null;
             return new UserDTO
